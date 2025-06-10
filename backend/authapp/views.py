@@ -7,8 +7,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -30,6 +33,7 @@ def register(request):
     return Response({'message': 'Usuario creado correctamente'})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -43,5 +47,6 @@ def login_view(request):
     return Response({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'role': user.profile.role,
     })
 

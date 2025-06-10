@@ -40,9 +40,11 @@ class Pegatina(models.Model):
 class Pregunta(models.Model):
     test = models.ForeignKey('Test', related_name='preguntas', on_delete=models.CASCADE)
     texto = models.TextField()
-
+    active = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.texto
+
 
 
 class Respuesta(models.Model):

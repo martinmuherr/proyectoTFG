@@ -6,24 +6,17 @@ class CursosSerializer(serializers.ModelSerializer):
         model = Cursos
         fields = ['id', 'name']
 
-class TestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Test
-        fields = ['id', 'name', 'content', 'active', 'cursos', 'created_by']
-        read_only_fields = ['created_by']
-
 class RespuestaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Respuesta
         fields = ['id', 'texto']
-
 
 class PreguntaSerializer(serializers.ModelSerializer):
     respuestas = RespuestaSerializer(many=True, read_only=True)
 
     class Meta:
         model = Pregunta
-        fields = ['id', 'enunciado', 'respuestas']
+        fields = ['id', 'texto', 'respuestas', 'active'] 
 
 
 class TestSerializer(serializers.ModelSerializer):
@@ -33,12 +26,10 @@ class TestSerializer(serializers.ModelSerializer):
         model = Test
         fields = ['id', 'name', 'content', 'active', 'preguntas']
 
-
 class PegatinaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pegatina
         fields = ['id', 'nombre', 'imagen']
-
 
 class CursoUsuarioSerializer(serializers.ModelSerializer):
     pegatinas = PegatinaSerializer(many=True, read_only=True)

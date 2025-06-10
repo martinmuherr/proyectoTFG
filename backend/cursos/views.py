@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
-from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta
-from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer
-from rest_framework import viewsets, permissions, status
-from rest_framework.permissions import IsAuthenticated
+from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta
+from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer
+from rest_framework import viewsets, permissions, status, generics
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 @api_view(['GET'])
 def cursos_list(request):
@@ -37,10 +37,6 @@ class TestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
-
-class TestViewSet(viewsets.ModelViewSet):
-    queryset = Test.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, methods=['post'], url_path='resolver')
     def resolver_test(self, request, pk=None):
@@ -88,3 +84,15 @@ class CursoUsuarioViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class PreguntasList(generics.ListAPIView):
+    serializer_class = PreguntaSerializer
+
+    def get_queryset(self):
+        test_id = self.kwargs['test_id']
+        return Pregunta.objects.filter(test_id=test_id)
+
+class PreguntaUpdate(generics.UpdateAPIView):
+    queryset = Pregunta.objects.all()
+    serializer_class = PreguntaSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
