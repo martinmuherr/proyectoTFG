@@ -5,18 +5,17 @@ from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerialize
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-@api_view(['GET'])
-def cursos_list(request):
-    cursos = Cursos.objects.all()
-    serializer = CursosSerializer(cursos, many=True)
-    return Response(serializer.data)
 
 class CursoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cursos.objects.all()
     serializer_class = CursosSerializer
 
+
+
+
 class TestViewSet(viewsets.ModelViewSet):
     serializer_class = TestSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         curso_id = self.kwargs.get('curso_id')
@@ -33,7 +32,7 @@ class TestViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAuthenticated(), permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated()] 
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -45,7 +44,7 @@ class TestViewSet(viewsets.ModelViewSet):
         if not test.active:
             return Response({'error': 'Test no está activo'}, status=status.HTTP_403_FORBIDDEN)
 
-        respuestas_usuario = request.data.get('respuestas', {})  # { pregunta_id: respuesta_id }
+        respuestas_usuario = request.data.get('respuestas', {})
 
         correctas = 0
         for pregunta in test.preguntas.all():
@@ -59,17 +58,18 @@ class TestViewSet(viewsets.ModelViewSet):
             except Respuesta.DoesNotExist:
                 continue
 
-        if correctas == test.preguntas.count():  # todo correcto
+        if correctas == test.preguntas.count():  
             curso_usuario, _ = CursoUsuario.objects.get_or_create(
                 user=request.user, curso=test.cursos
             )
             curso_usuario.puntos += 1
-            pegatina = Pegatina.objects.first()  # usar lógica para elegir pegatina más adelante
+            pegatina = Pegatina.objects.first() 
             if pegatina:
                 curso_usuario.pegatinas.add(pegatina)
             curso_usuario.save()
 
         return Response({'correctas': correctas, 'total': test.preguntas.count()})
+    
 
 class CursoUsuarioViewSet(viewsets.ModelViewSet):
     queryset = CursoUsuario.objects.all()
