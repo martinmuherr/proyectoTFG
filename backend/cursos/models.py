@@ -54,3 +54,19 @@ class Respuesta(models.Model):
 
     def __str__(self):
         return f"{self.texto} ({'Correcta' if self.correcta else 'Incorrecta'})"
+   
+
+class TestResuelto(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    respondido_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'test')
+
+class TestRespondido(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test = models.ForeignKey('Test', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'test')

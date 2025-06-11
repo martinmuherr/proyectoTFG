@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
-from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta
+from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta, TestResuelto, TestRespondido
 from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from random import choice
 
 
 class CursoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,6 +28,10 @@ class TestViewSet(viewsets.ModelViewSet):
         if not self.request.user.is_staff:
             queryset = queryset.filter(active=True)
 
+        if self.request.user.is_authenticated and not self.request.user.is_staff:
+            respondidos = TestRespondido.objects.filter(user=self.request.user).values_list('test_id', flat=True)
+            queryset = queryset.exclude(id__in=respondidos)
+            
         return queryset
 
     def get_permissions(self):
@@ -37,16 +42,19 @@ class TestViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-    @action(detail=True, methods=['post'], url_path='resolver')
-    def resolver_test(self, request, pk=None):
+    @action(detail=True, methods=['post'], url_path='resolver', url_name='resolver')
+    def resolver_test(self, request, curso_id=None, pk=None):
+        if request.user.is_staff:
+            return Response({'error': 'Los profesores no pueden resolver tests.'}, status=status.HTTP_403_FORBIDDEN)
+
         test = self.get_object()
 
         if not test.active:
             return Response({'error': 'Test no está activo'}, status=status.HTTP_403_FORBIDDEN)
 
         respuestas_usuario = request.data.get('respuestas', {})
-
         correctas = 0
+
         for pregunta in test.preguntas.all():
             respuesta_id = respuestas_usuario.get(str(pregunta.id))
             if not respuesta_id:
@@ -58,17 +66,19 @@ class TestViewSet(viewsets.ModelViewSet):
             except Respuesta.DoesNotExist:
                 continue
 
-        if correctas == test.preguntas.count():  
+        if correctas == test.preguntas.count():
             curso_usuario, _ = CursoUsuario.objects.get_or_create(
                 user=request.user, curso=test.cursos
             )
             curso_usuario.puntos += 1
-            pegatina = Pegatina.objects.first() 
+            pegatina = Pegatina.objects.order_by('?').first()  # aleatoria
             if pegatina:
                 curso_usuario.pegatinas.add(pegatina)
             curso_usuario.save()
 
+        TestRespondido.objects.get_or_create(user=request.user, test=test)
         return Response({'correctas': correctas, 'total': test.preguntas.count()})
+
     
 
 class CursoUsuarioViewSet(viewsets.ModelViewSet):
