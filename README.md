@@ -65,10 +65,12 @@ ng serve
 
 Frontend disponible en http://localhost:4200
 ```
+
 🔐 Login
 El login usa JWT (token almacenado en localStorage).
 
 Rutas protegidas por token desde Angular con HttpInterceptor.
+
 
 🧪 Características
 Registro/Login de usuarios
@@ -80,6 +82,7 @@ Visualización y activación de tests
 Resolución de preguntas con lógica de puntos y recompensas
 
 Administración vía Django Admin
+
 
 ⚙️ Notas
 Los cursos y tests solo los crea un administrador.
