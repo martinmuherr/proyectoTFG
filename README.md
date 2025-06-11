@@ -31,11 +31,15 @@ frontend/
 ```bash
 git clone https://github.com/tuusuario/tu-repo.git
 cd tu-repo
-
+```
+### 2. Crear y activar el entorno virtual
+```bash
 python -m venv env
 source env/bin/activate  # Linux/Mac
 env\Scripts\activate     # Windows
-
+```
+### 3. Instalar dependencias del backend y encender el servidor
+```bash
 pip install -r requirements.txt
 
 pip install django djangorestframework djangorestframework-simplejwt pillow django-cors-headers
@@ -48,7 +52,7 @@ python manage.py createsuperuser
 python manage.py runserver
 
 Backend disponible en http://localhost:8000
-
+```
 cd frontend
 
 npm install
