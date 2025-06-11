@@ -53,6 +53,10 @@ python manage.py runserver
 
 Backend disponible en http://localhost:8000
 ```
+### 4. Ininiciar el frontend
+```bash
+cd frontend
+
 cd frontend
 
 npm install
@@ -60,7 +64,7 @@ npm install
 ng serve
 
 Frontend disponible en http://localhost:4200
-
+```
 🔐 Login
 El login usa JWT (token almacenado en localStorage).
 
