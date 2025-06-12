@@ -169,19 +169,23 @@ class PreguntaUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class IntercambioViewSet(viewsets.ModelViewSet):
+    queryset = Intercambio.objects.all()
     serializer_class = IntercambioSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Intercambio.objects.filter(receptor=self.request.user, estado='pendiente')
+        if self.action == 'list':
+            return Intercambio.objects.filter(receptor=self.request.user, estado='pendiente')
+        return Intercambio.objects.all()
 
     def create(self, request, *args, **kwargs):
-        print("DEBUG USER:", request.user)
         data = request.data.copy()
         data['emisor'] = request.user.id
+
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
