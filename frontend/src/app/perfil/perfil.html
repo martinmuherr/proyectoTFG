@@ -1,0 +1,16 @@
+<h2>Perfil</h2>
+
+<p><strong>Usuario:</strong> {{ usuario.username }}</p>
+<p><strong>Rol:</strong> {{ usuario.role }}</p>
+
+<div *ngIf="usuario.role === 'profesor'">
+  <h3>Historial de intercambios</h3>
+  <ul>
+    <li *ngFor="let i of intercambios">
+      {{ i.fecha | date:'short' }} - 
+      <strong>{{ i.emisor }}</strong> → <strong>{{ i.receptor }}</strong>: 
+      "{{ i.pegatina_emisor }}" ⇄ "{{ i.pegatina_receptor || 'Sin respuesta' }}" — 
+      <em>{{ i.estado }}</em>
+    </li>
+  </ul>
+</div>

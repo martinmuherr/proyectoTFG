@@ -1,14 +1,13 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -50,3 +49,11 @@ def login_view(request):
         'role': user.profile.role,
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile(request):
+    return Response({
+        'id': request.user.id,
+        'username': request.user.username,
+        'role': request.user.profile.role 
+    })

@@ -16,6 +16,7 @@ import { AuthInterceptor } from './app/interceptors/auth.interceptor';
 import { Ranking } from './app/ranking/ranking';
 import { Pegatinas } from './app/pegatinas/pegatinas';
 import { Intercambio } from './app/intercambio/intercambio';
+import { Perfil } from './app/perfil/perfil';
 
     const routes: Routes = [
       { path: '', component: Login },
@@ -28,6 +29,7 @@ import { Intercambio } from './app/intercambio/intercambio';
       { path: 'curso/:id/ranking', component: Ranking },
       { path: 'curso/:id/pegatinas', component: Pegatinas },
       { path: 'curso/:id/intercambio', component: Intercambio },
+      { path: 'curso/:id/perfil', component: Perfil },
       { path: '**', component: NotFound }
     ];
 

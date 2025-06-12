@@ -5,7 +5,7 @@ from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerialize
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from random import choice
-
+from rest_framework.exceptions import PermissionDenied
 
 
 @api_view(['GET'])
@@ -21,6 +21,36 @@ def usuarios_mismo_curso(request):
 def mis_pegatinas(request):
     pegatinas = request.user.pegatinas.all()
     data = [{'id': p.id, 'nombre': p.nombre, 'imagen': p.imagen.url} for p in pegatinas]
+    return Response(data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def historial_intercambios(request):
+    print("DEBUG perfil:", getattr(request.user, 'profile', None))
+    print("DEBUG rol:", getattr(request.user.profile, 'role', 'N/A'))
+
+    try:
+        if request.user.profile.role != 'profesor':
+            raise PermissionDenied("Solo los profesores pueden ver el historial de intercambios.")
+    except AttributeError:
+        raise PermissionDenied("No tienes perfil o rol asignado.")
+
+
+    cursos_ids = CursoUsuario.objects.filter(user=request.user).values_list('curso_id', flat=True)
+    intercambios = Intercambio.objects.filter(
+        curso_id__in=cursos_ids
+    ).select_related('emisor', 'receptor', 'pegatina_emisor', 'pegatina_receptor')
+
+    data = [{
+        'emisor': i.emisor.username,
+        'receptor': i.receptor.username,
+        'pegatina_emisor': i.pegatina_emisor.nombre if i.pegatina_emisor else None,
+        'pegatina_receptor': i.pegatina_receptor.nombre if i.pegatina_receptor else None,
+        'estado': i.estado,
+        'fecha': i.fecha.isoformat() if i.fecha else None
+    } for i in intercambios]
+
     return Response(data)
 
 
@@ -139,16 +169,14 @@ class PreguntaUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class IntercambioViewSet(viewsets.ModelViewSet):
-    queryset = Intercambio.objects.all()
     serializer_class = IntercambioSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        if self.action == 'list':
-            return Intercambio.objects.filter(receptor=self.request.user, estado='pendiente')
-        return Intercambio.objects.all()
-    
+        return Intercambio.objects.filter(receptor=self.request.user, estado='pendiente')
+
     def create(self, request, *args, **kwargs):
+        print("DEBUG USER:", request.user)
         data = request.data.copy()
         data['emisor'] = request.user.id
         serializer = self.get_serializer(data=data)
@@ -185,3 +213,24 @@ class IntercambioViewSet(viewsets.ModelViewSet):
         intercambio.estado = 'rechazado'
         intercambio.save()
         return Response({'status': 'intercambio rechazado'})
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def historial_intercambios(request):
+    if not request.user.is_staff:
+        return Response({'detail': 'No autorizado'}, status=403)
+
+    intercambios = Intercambio.objects.exclude(estado='pendiente').order_by('-creado')
+    data = [
+        {
+            'id': i.id,
+            'emisor': i.emisor.username,
+            'receptor': i.receptor.username,
+            'pegatina_emisor': i.pegatina_emisor.nombre,
+            'pegatina_receptor': i.pegatina_receptor.nombre if i.pegatina_receptor else None,
+            'estado': i.estado,
+            'fecha': i.creado
+        }
+        for i in intercambios
+    ]
+    return Response(data)

@@ -63,29 +63,27 @@ export class Intercambio implements OnInit {
     });    
   }
   
-
   aceptar(intercambio: any) {
     if (!this.pegatinaARecibirId) {
       alert('Debes elegir una pegatina tuya para intercambiar.');
       return;
     }
-
-    this.http.patch(`http://localhost:8000/api/cursos/intercambios/${intercambio.id}/`, {
-      aceptar: true,
+  
+    this.http.patch(`http://localhost:8000/api/cursos/intercambios/${intercambio.id}/aceptar/`, {
       pegatina_receptor_id: this.pegatinaARecibirId
     }).subscribe(() => {
       alert('Intercambio realizado');
-      this.cargarIntercambios();
+      this.cargarIntercambios(); 
       this.cargarPegatinas();
     });
   }
-
+  
   rechazar(intercambio: any) {
-    this.http.patch(`http://localhost:8000/api/cursos/intercambios/${intercambio.id}/`, {
-      aceptar: false
-    }).subscribe(() => {
-      alert('Intercambio rechazado');
-      this.cargarIntercambios();
-    });
+    this.http.patch(`http://localhost:8000/api/cursos/intercambios/${intercambio.id}/rechazar/`, {})
+      .subscribe(() => {
+        alert('Intercambio rechazado');
+        this.cargarIntercambios();
+      });
   }
+  
 }

@@ -33,8 +33,12 @@ export class CursoDetalle implements OnInit {
     this.router.navigate(['/curso', this.cursoId, 'pegatinas']);
   }
 
-  VerIntercambio() {
+  verIntercambio() {
     this.router.navigate(['/curso', this.cursoId, 'intercambio']);
+  }
+
+  verPerfil() {
+    this.router.navigate(['/curso', this.cursoId, 'perfil']);
   }
 
 }

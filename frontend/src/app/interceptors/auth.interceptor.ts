@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent } from '@angul
 import { Observable } from 'rxjs';
 
 export const AuthInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-  if (req.url.endsWith('/api/auth/login/')) {
+  if (req.url.endsWith('/api/auth/login/') || req.url.endsWith('/api/auth/register/')) {
     return next(req);
   }
 

@@ -40,7 +40,13 @@ class CursoUsuarioSerializer(serializers.ModelSerializer):
 
 
 class IntercambioSerializer(serializers.ModelSerializer):
+    emisor = serializers.StringRelatedField()
+    receptor = serializers.StringRelatedField()
+    pegatina_emisor = serializers.StringRelatedField()
+    pegatina_receptor = serializers.StringRelatedField()
+
     class Meta:
         model = Intercambio
         fields = '__all__'
+
 
