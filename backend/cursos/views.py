@@ -184,7 +184,9 @@ class IntercambioViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+        print("DEBUG errores:", serializer.errors)
         self.perform_create(serializer)
+        print("Errores del serializer:", serializer.errors)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

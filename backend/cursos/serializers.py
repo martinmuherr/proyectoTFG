@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cursos, Test, Pregunta, Respuesta, CursoUsuario, Pegatina, Intercambio
+from .models import Cursos, Test, Pregunta, Respuesta, CursoUsuario, Pegatina, Intercambio, User
 
 class CursosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,13 +40,14 @@ class CursoUsuarioSerializer(serializers.ModelSerializer):
 
 
 class IntercambioSerializer(serializers.ModelSerializer):
-    emisor = serializers.StringRelatedField()
-    receptor = serializers.StringRelatedField()
-    pegatina_emisor = serializers.StringRelatedField()
-    pegatina_receptor = serializers.StringRelatedField()
+    emisor = serializers.PrimaryKeyRelatedField(read_only=True)
+    receptor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    pegatina_emisor = serializers.PrimaryKeyRelatedField(queryset=Pegatina.objects.all())
+    pegatina_receptor = serializers.PrimaryKeyRelatedField(queryset=Pegatina.objects.all(), allow_null=True)
 
     class Meta:
         model = Intercambio
         fields = '__all__'
+
 
 

@@ -55,7 +55,7 @@ export class Intercambio implements OnInit {
     if (!this.pegatinaSeleccionada || !this.receptorId) return;
   
     this.http.post('http://localhost:8000/api/cursos/intercambios/', {
-      pegatina_emisor: this.pegatinaSeleccionada,
+      pegatina_emisor: this.pegatinaSeleccionada.id,
       receptor: this.receptorId
     }).subscribe(() => {
       alert('Solicitud enviada');
