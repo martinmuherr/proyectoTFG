@@ -58,8 +58,6 @@ cargarPreguntas() {
     }
   });
 }
-
-
   guardarCambios(pregunta: Pregunta) {
     const url = `http://localhost:8000/api/preguntas/${pregunta.id}/`;
     this.http.patch<Pregunta>(url, { active: pregunta.active }).subscribe({
@@ -84,5 +82,10 @@ cargarPreguntas() {
         },
         error: () => alert('Error al cambiar estado de la pregunta')
       });
+  }
+
+  volverAlCurso() {
+    this.router.navigate(['/curso', this.cursoId]);
+
   }
 }

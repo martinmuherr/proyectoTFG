@@ -9,23 +9,25 @@ import { Register } from './app/register/register';
 import { NotFound } from './app/not-found/not-found';
 import { Cursos } from './app/cursos/cursos';
 import { CursoDetalle } from './app/curso-detalle/curso-detalle';
-import { Tests } from './app/tests/tests';
+//import { Tests } from './app/tests/tests';
 import { TestResolver } from './app/test-resolver/test-resolver';
 import { TestsList } from './app/test-list/test-list';
 import { AuthInterceptor } from './app/interceptors/auth.interceptor';
 import { Ranking } from './app/ranking/ranking';
 import { Pegatinas } from './app/pegatinas/pegatinas';
+import { Intercambio } from './app/intercambio/intercambio';
 
     const routes: Routes = [
       { path: '', component: Login },
       { path: 'register', component: Register },
       { path: 'cursos', component: Cursos },
       { path: 'curso/:id', component: CursoDetalle },
-      { path: 'curso/:id/tests', component: Tests },
+      //{ path: 'curso/:id/tests', component: Tests },
       { path: 'curso/:id/test/:testId', component: TestResolver },
       { path: 'curso/:cursoId/tests', component: TestsList },
       { path: 'curso/:id/ranking', component: Ranking },
       { path: 'curso/:id/pegatinas', component: Pegatinas },
+      { path: 'curso/:id/intercambio', component: Intercambio },
       { path: '**', component: NotFound }
     ];
 

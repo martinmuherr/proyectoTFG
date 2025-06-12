@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cursos, Test, Pregunta, Respuesta, CursoUsuario, Pegatina
+from .models import Cursos, Test, Pregunta, Respuesta, CursoUsuario, Pegatina, Intercambio
 
 class CursosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,3 +37,10 @@ class CursoUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = CursoUsuario
         fields = ['id', 'user', 'curso', 'puntos', 'pegatinas']
+
+
+class IntercambioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Intercambio
+        fields = '__all__'
+

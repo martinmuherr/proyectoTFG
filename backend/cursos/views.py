@@ -1,10 +1,27 @@
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
-from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta, TestResuelto, TestRespondido
-from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer, PegatinaSerializer
+from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta, TestResuelto, TestRespondido, Intercambio, User
+from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer, PegatinaSerializer, IntercambioSerializer
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from random import choice
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def usuarios_mismo_curso(request):
+    cursos_ids = CursoUsuario.objects.filter(user=request.user).values_list('curso_id', flat=True)
+    usuarios = User.objects.filter(cursousuario__curso_id__in=cursos_ids).exclude(id=request.user.id).distinct()
+    data = [{'id': u.id, 'username': u.username} for u in usuarios]
+    return Response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def mis_pegatinas(request):
+    pegatinas = request.user.pegatinas.all()
+    data = [{'id': p.id, 'nombre': p.nombre, 'imagen': p.imagen.url} for p in pegatinas]
+    return Response(data)
 
 
 class CursoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,15 +44,6 @@ class CursoViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(data)
     
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def mis_pegatinas(request):
-    usuario = request.user
-    pegatinas = usuario.pegatina_set.all()  # si usas related_name puede cambiar
-    data = [{'id': p.id, 'imagen': p.imagen.url, 'nombre': p.nombre} for p in pegatinas]
-    return Response(data)
-
-
 
 class TestViewSet(viewsets.ModelViewSet):
     serializer_class = TestSerializer
@@ -96,7 +104,7 @@ class TestViewSet(viewsets.ModelViewSet):
             curso_usuario.puntos += 1
             pegatina = Pegatina.objects.order_by('?').first()  # aleatoria
             if pegatina:
-                curso_usuario.pegatinas.add(pegatina)
+                pegatina.usuarios.add(request.user)
             curso_usuario.save()
 
         TestRespondido.objects.get_or_create(user=request.user, test=test)
@@ -129,3 +137,51 @@ class PreguntaUpdate(generics.UpdateAPIView):
     queryset = Pregunta.objects.all()
     serializer_class = PreguntaSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+
+class IntercambioViewSet(viewsets.ModelViewSet):
+    queryset = Intercambio.objects.all()
+    serializer_class = IntercambioSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.action == 'list':
+            return Intercambio.objects.filter(receptor=self.request.user, estado='pendiente')
+        return Intercambio.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['emisor'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+    @action(detail=True, methods=['patch'])
+    def aceptar(self, request, pk=None):
+        intercambio = self.get_object()
+        pegatina_receptor_id = request.data.get('pegatina_receptor_id')
+        try:
+            pegatina_receptor = Pegatina.objects.get(id=pegatina_receptor_id, usuarios=request.user)
+        except Pegatina.DoesNotExist:
+            return Response({'error': 'Pegatina no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Realizar intercambio
+        intercambio.receptor.pegatinas.remove(pegatina_receptor)
+        intercambio.emisor.pegatinas.remove(intercambio.pegatina_emisor)
+
+        intercambio.receptor.pegatinas.add(intercambio.pegatina_emisor)
+        intercambio.emisor.pegatinas.add(pegatina_receptor)
+
+        intercambio.pegatina_receptor = pegatina_receptor
+        intercambio.estado = 'aceptado'
+        intercambio.save()
+        return Response({'status': 'intercambio realizado'})
+
+    @action(detail=True, methods=['patch'])
+    def rechazar(self, request, pk=None):
+        intercambio = self.get_object()
+        intercambio.estado = 'rechazado'
+        intercambio.save()
+        return Response({'status': 'intercambio rechazado'})

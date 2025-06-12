@@ -1,0 +1,33 @@
+<h2>Intercambiar Pegatinas</h2>
+
+<!-- Formulario para proponer intercambio -->
+<div>
+  <label>Selecciona pegatina a enviar:</label>
+  <select [(ngModel)]="pegatinaSeleccionada">
+    <option *ngFor="let p of pegatinasPropias" [value]="p.id">{{ p.nombre }}</option>
+  </select>
+
+  <label>Selecciona usuario destinatario:</label>
+<select [(ngModel)]="receptorId">
+  <option *ngFor="let u of usuarios" [value]="u.id">{{ u.username }}</option>
+</select>
+
+
+  <button (click)="enviarSolicitud()">Enviar solicitud</button>
+</div>
+
+<!-- Intercambios pendientes -->
+<h3>Solicitudes pendientes</h3>
+<div *ngFor="let i of intercambiosPendientes">
+  <p>De: {{ i.emisor_username }} quiere intercambiar su pegatina "{{ i.pegatina_emisor_nombre }}"</p>
+
+  <div>
+    <label>Elegir tu pegatina a cambio:</label>
+    <select [(ngModel)]="pegatinaARecibirId">
+      <option *ngFor="let p of pegatinasPropias" [value]="p.id">{{ p.nombre }}</option>
+    </select>
+  </div>
+
+  <button (click)="aceptar(i)">Aceptar</button>
+  <button (click)="rechazar(i)">Rechazar</button>
+</div>

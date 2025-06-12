@@ -69,3 +69,11 @@ class Pegatina(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class Intercambio(models.Model):
+    emisor = models.ForeignKey(User, related_name='intercambios_enviados', on_delete=models.CASCADE)
+    receptor = models.ForeignKey(User, related_name='intercambios_recibidos', on_delete=models.CASCADE)
+    pegatina_emisor = models.ForeignKey(Pegatina, related_name='ofrecidas', on_delete=models.CASCADE)
+    pegatina_receptor = models.ForeignKey(Pegatina, related_name='deseadas', on_delete=models.CASCADE, null=True, blank=True)
+    estado = models.CharField(max_length=10, choices=[('pendiente', 'Pendiente'), ('aceptado', 'Aceptado'), ('rechazado', 'Rechazado')], default='pendiente')
+    creado = models.DateTimeField(auto_now_add=True)

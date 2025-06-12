@@ -67,4 +67,5 @@ export class TestResolver implements OnInit {
       error: () => this.error = 'Error al enviar las respuestas.'
     });
   }
+
 }
