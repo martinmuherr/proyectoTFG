@@ -1,0 +1,12 @@
+<form (submit)="register(username.value, password.value, role.value)">
+  <input #username type="text" placeholder="Usuario" required />
+  <input #password type="password" placeholder="Contraseña" required />
+  <select #role required>
+    <option value="" disabled selected>Selecciona rol</option>
+    <option value="profesor">Profesor</option>
+    <option value="alumno">Alumno</option>
+  </select>
+  <button type="submit">Registrar</button>
+</form>
+<button (click)="goLogin()">Ir a Login</button>
+<p>{{ message }}</p>

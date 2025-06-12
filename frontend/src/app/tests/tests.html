@@ -1,0 +1,8 @@
+<h2>Tests disponibles</h2>
+<div *ngIf="error">{{ error }}</div>
+<ul>
+  <li *ngFor="let test of tests">
+    {{ test.name }}
+    <button (click)="hacerTest(test.id)">Hacer test</button>
+  </li>
+</ul>

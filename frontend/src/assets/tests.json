@@ -1,0 +1,29 @@
+{
+  "test_title": "Test de ejemplo",
+  "questions": [
+    {
+      "id": 1,
+      "question_text": "¿Cuál es la capital de Francia?",
+      "answers": [
+        {"id": "a", "text": "Madrid"},
+        {"id": "b", "text": "París"},
+        {"id": "c", "text": "Roma"},
+        {"id": "d", "text": "Berlín"}
+      ],
+      "correct_answer_id": "b",
+      "active": false
+    },
+    {
+      "id": 2,
+      "question_text": "¿Cuánto es 2 + 2?",
+      "answers": [
+        {"id": "a", "text": "3"},
+        {"id": "b", "text": "4"},
+        {"id": "c", "text": "5"},
+        {"id": "d", "text": "6"}
+      ],
+      "correct_answer_id": "b",
+      "active": false
+    }
+  ]
+}

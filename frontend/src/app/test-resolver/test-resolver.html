@@ -1,0 +1,27 @@
+<h2>Test: {{ test?.name }}</h2>
+<div *ngIf="error" style="color:red">{{ error }}</div>
+
+<div *ngIf="!terminado">
+  <div *ngFor="let pregunta of preguntas">
+    <p><strong>{{ pregunta.texto }}</strong></p>
+    <ul>
+      <li *ngFor="let respuesta of pregunta.respuestas">
+        <label>
+          <input type="radio"
+                 [name]="'pregunta-' + pregunta.id"
+                 [value]="respuesta.id"
+                 (change)="seleccionarRespuesta(pregunta.id, respuesta.id)">
+          {{ respuesta.texto }}
+        </label>
+      </li>
+    </ul>
+  </div>
+  <button (click)="enviarRespuestas()" [disabled]="esProfesor">Enviar respuestas</button>
+<div *ngIf="esProfesor" style="color: gray;">Los profesores no pueden responder tests.</div>
+
+</div>
+
+<div *ngIf="terminado">
+  <p>Has obtenido {{ puntosObtenidos }} punto(s) en este test.</p>
+  <button (click)="router.navigate(['/curso', cursoId, 'tests'])">Volver a tests</button>
+</div>

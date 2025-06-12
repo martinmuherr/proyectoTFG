@@ -1,0 +1,10 @@
+<h2>Cursos disponibles</h2>
+
+<div *ngIf="error">{{ error }}</div>
+
+<ul>
+  <li *ngFor="let curso of cursos">
+    {{ curso.name }}
+    <button (click)="unirse(curso.id)">Unirse</button>
+  </li>
+</ul>
