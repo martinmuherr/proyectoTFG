@@ -23,6 +23,14 @@ export class CursoDetalle implements OnInit {
 
   verTests() {
   this.router.navigate(['/curso', this.cursoId, 'tests']);
-}
+  }
+
+  verRanking() {
+    this.router.navigate(['/curso', this.cursoId, 'ranking']);
+  }
+
+  verPegatinas() {
+    this.router.navigate(['/curso', this.cursoId, 'pegatinas']);
+  }
 
 }

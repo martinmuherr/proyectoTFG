@@ -29,13 +29,6 @@ class CursoUsuario(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.curso.name}"
-        
-class Pegatina(models.Model):
-    nombre = models.CharField(max_length=100)
-    imagen = models.ImageField(upload_to='pegatinas/')
-
-    def __str__(self):
-        return self.nombre
     
 class Pregunta(models.Model):
     test = models.ForeignKey('Test', related_name='preguntas', on_delete=models.CASCADE)
@@ -44,8 +37,6 @@ class Pregunta(models.Model):
     
     def __str__(self):
         return self.texto
-
-
 
 class Respuesta(models.Model):
     pregunta = models.ForeignKey(Pregunta, related_name='respuestas', on_delete=models.CASCADE)
@@ -70,3 +61,11 @@ class TestRespondido(models.Model):
 
     class Meta:
         unique_together = ('user', 'test')
+
+class Pegatina(models.Model):
+    nombre = models.CharField(max_length=100)
+    imagen = models.ImageField(upload_to='pegatinas/')
+    usuarios = models.ManyToManyField(User, related_name='pegatinas', blank=True)  # Relación directa
+
+    def __str__(self):
+        return self.nombre

@@ -1,7 +1,7 @@
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
 from .models import Cursos, Test, CursoUsuario, Pegatina, Respuesta, Pregunta, TestResuelto, TestRespondido
-from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer
+from .serializers import CursosSerializer, TestSerializer, CursoUsuarioSerializer, PreguntaSerializer, PegatinaSerializer
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from random import choice
@@ -11,6 +11,29 @@ class CursoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cursos.objects.all()
     serializer_class = CursosSerializer
 
+    @action(detail=True, methods=['get'], url_path='ranking', permission_classes=[IsAuthenticated])
+    def ranking(self, request, pk=None):
+        curso_usuarios = CursoUsuario.objects.filter(curso__id=pk, user__profile__role='alumno').order_by('-puntos')
+
+        vistos = set()
+        data = []
+        for cu in curso_usuarios:
+            if cu.user.id not in vistos:
+                data.append({
+                    'username': cu.user.username,
+                    'puntos': cu.puntos
+                })
+                vistos.add(cu.user.id)
+
+        return Response(data)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def mis_pegatinas(request):
+    usuario = request.user
+    pegatinas = usuario.pegatina_set.all()  # si usas related_name puede cambiar
+    data = [{'id': p.id, 'imagen': p.imagen.url, 'nombre': p.nombre} for p in pegatinas]
+    return Response(data)
 
 
 

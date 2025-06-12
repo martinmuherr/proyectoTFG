@@ -13,6 +13,8 @@ import { Tests } from './app/tests/tests';
 import { TestResolver } from './app/test-resolver/test-resolver';
 import { TestsList } from './app/test-list/test-list';
 import { AuthInterceptor } from './app/interceptors/auth.interceptor';
+import { Ranking } from './app/ranking/ranking';
+import { Pegatinas } from './app/pegatinas/pegatinas';
 
     const routes: Routes = [
       { path: '', component: Login },
@@ -22,6 +24,8 @@ import { AuthInterceptor } from './app/interceptors/auth.interceptor';
       { path: 'curso/:id/tests', component: Tests },
       { path: 'curso/:id/test/:testId', component: TestResolver },
       { path: 'curso/:cursoId/tests', component: TestsList },
+      { path: 'curso/:id/ranking', component: Ranking },
+      { path: 'curso/:id/pegatinas', component: Pegatinas },
       { path: '**', component: NotFound }
     ];
 

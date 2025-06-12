@@ -1,0 +1,9 @@
+<h2>Mis Pegatinas</h2>
+<div *ngIf="error">{{ error }}</div>
+<div *ngIf="pegatinas.length === 0 && !error">No tienes pegatinas aún.</div>
+<div class="pegatinas-container">
+  <div *ngFor="let p of pegatinas" class="pegatina">
+    <img [src]="'http://localhost:8000' + p.imagen" [alt]="p.nombre" width="100" />
+    <p>{{ p.nombre }}</p>
+  </div>
+</div>
