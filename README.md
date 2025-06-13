@@ -36,10 +36,12 @@ cd tu-repo
 ```bash
 python -m venv env
 source env/bin/activate  # Linux/Mac
-env\Scripts\activate     # Windows
+source env\Scripts\activate     # Windows
 ```
 ### 3. Instalar dependencias del backend y encender el servidor
 ```bash
+cd backend
+
 pip install -r requirements.txt
 
 pip install django djangorestframework djangorestframework-simplejwt pillow django-cors-headers
