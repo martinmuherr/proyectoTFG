@@ -6,6 +6,8 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from random import choice
 from rest_framework.exceptions import PermissionDenied
+from authapp.models import Profile
+
 
 
 @api_view(['GET'])
@@ -23,35 +25,29 @@ def mis_pegatinas(request):
     data = [{'id': p.id, 'nombre': p.nombre, 'imagen': p.imagen.url} for p in pegatinas]
     return Response(data)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def historial_intercambios(request):
-    print("DEBUG perfil:", getattr(request.user, 'profile', None))
-    print("DEBUG rol:", getattr(request.user.profile, 'role', 'N/A'))
-
-    try:
-        if request.user.profile.role != 'profesor':
-            raise PermissionDenied("Solo los profesores pueden ver el historial de intercambios.")
-    except AttributeError:
-        raise PermissionDenied("No tienes perfil o rol asignado.")
-
-
+    if not hasattr(request.user, 'profile') or request.user.profile.role != 'profesor':
+        raise PermissionDenied("Solo los profesores pueden ver el historial de intercambios.")
+    
     cursos_ids = CursoUsuario.objects.filter(user=request.user).values_list('curso_id', flat=True)
+    
     intercambios = Intercambio.objects.filter(
-        curso_id__in=cursos_ids
+        receptor__curso_usuario__curso_id__in=cursos_ids
     ).select_related('emisor', 'receptor', 'pegatina_emisor', 'pegatina_receptor')
 
     data = [{
         'emisor': i.emisor.username,
         'receptor': i.receptor.username,
-        'pegatina_emisor': i.pegatina_emisor.nombre if i.pegatina_emisor else None,
+        'pegatina_emisor': i.pegatina_emisor.nombre,
         'pegatina_receptor': i.pegatina_receptor.nombre if i.pegatina_receptor else None,
         'estado': i.estado,
-        'fecha': i.fecha.isoformat() if i.fecha else None
+        'fecha': i.creado.isoformat() if i.creado else None
     } for i in intercambios]
 
     return Response(data)
+
 
 
 class CursoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -180,15 +176,16 @@ class IntercambioViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['emisor'] = request.user.id
-
         serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        print("DEBUG errores:", serializer.errors)
-        self.perform_create(serializer)
-        print("Errores del serializer:", serializer.errors)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if not serializer.is_valid():
+            print("DEBUG errores:", serializer.errors)
+            return Response(serializer.errors, status=400)
+
+        # Guardamos el intercambio con el usuario autenticado como emisor
+        serializer.save(emisor=request.user)
+        return Response(serializer.data, status=201)
+
 
 
 
@@ -220,23 +217,32 @@ class IntercambioViewSet(viewsets.ModelViewSet):
         intercambio.save()
         return Response({'status': 'intercambio rechazado'})
     
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def historial_intercambios(request):
-    if not request.user.is_staff:
-        return Response({'detail': 'No autorizado'}, status=403)
+    try:
+        profile = request.user.profile
+        print("DEBUG perfil:", profile)
+        print("DEBUG rol:", profile.role)
+        
+        if profile.role != 'profesor':
+            return Response({'detail': 'Acceso restringido a profesores.'}, status=403)
+    except Profile.DoesNotExist:
+        return Response({'detail': 'No tienes perfil asociado.'}, status=403)
 
-    intercambios = Intercambio.objects.exclude(estado='pendiente').order_by('-creado')
-    data = [
-        {
-            'id': i.id,
-            'emisor': i.emisor.username,
-            'receptor': i.receptor.username,
-            'pegatina_emisor': i.pegatina_emisor.nombre,
-            'pegatina_receptor': i.pegatina_receptor.nombre if i.pegatina_receptor else None,
-            'estado': i.estado,
-            'fecha': i.creado
-        }
-        for i in intercambios
-    ]
+    cursos_ids = CursoUsuario.objects.filter(user=request.user).values_list('curso_id', flat=True)
+    intercambios = Intercambio.objects.filter(
+        curso_id__in=cursos_ids
+    ).select_related('emisor', 'receptor', 'pegatina_emisor', 'pegatina_receptor')
+
+    data = [{
+        'emisor': i.emisor.username,
+        'receptor': i.receptor.username,
+        'pegatina_emisor': i.pegatina_emisor.nombre if i.pegatina_emisor else None,
+        'pegatina_receptor': i.pegatina_receptor.nombre if i.pegatina_receptor else None,
+        'estado': i.estado,
+        'fecha': i.creado.isoformat() if i.creado else None
+    } for i in intercambios]
+
     return Response(data)

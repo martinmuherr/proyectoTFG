@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-
+from authapp.models import Profile
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -23,11 +23,15 @@ def register(request):
         return Response({'error': 'Usuario ya existe'}, status=status.HTTP_400_BAD_REQUEST)
 
     user = User.objects.create(
-        username=username,
-        password=make_password(password)
-    )
-    user.profile.role = role  
-    user.profile.save()
+    username=username,
+    password=make_password(password)
+)
+
+    # Forzamos creación del perfil si el signal no ha corrido aún
+    profile, created = Profile.objects.get_or_create(user=user)
+    profile.role = role
+    profile.save()
+
 
     return Response({'message': 'Usuario creado correctamente'})
 
