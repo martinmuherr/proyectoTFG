@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-perfil',
@@ -12,8 +14,10 @@ import { CommonModule } from '@angular/common';
 export class Perfil implements OnInit {
   usuario: any = {};
   intercambios: any[] = [];
+  cursoId!: number;
 
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.http.get('http://localhost:8000/api/auth/profile/').subscribe(data => {
@@ -21,6 +25,8 @@ export class Perfil implements OnInit {
       if (this.usuario.role === 'profesor') {
         this.cargarHistorial();
       }
+    const urlParams = this.router.url.split('/');
+    this.cursoId = Number(urlParams[2]);
     });
   }
   
@@ -29,6 +35,10 @@ export class Perfil implements OnInit {
       .subscribe(data => {
         this.intercambios = data;
       });
+  }
+
+  volverAlCurso() {
+    this.router.navigate(['/curso', this.cursoId]);
   }
   
 }

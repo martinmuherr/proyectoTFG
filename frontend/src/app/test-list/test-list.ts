@@ -15,7 +15,15 @@ interface Pregunta {
   texto: string;
   respuestas: Respuesta[];
   active: boolean;
+  test_nombre?: string;
 }
+
+interface TestConPreguntas {
+  id: number;
+  name: string;
+  preguntas: Pregunta[];
+}
+
 
 @Component({
   selector: 'app-tests-list',
@@ -43,23 +51,30 @@ export class TestsList implements OnInit {
     this.cargarPreguntas();
   }
 
-cargarPreguntas() {
-  this.http.get<Pregunta[]>(`http://localhost:8000/api/cursos/${this.cursoId}/tests/`).subscribe({
-    next: data => {
-      console.log('Datos recibidos:', data);
-      this.preguntas = data;
-      if (!this.esProfesor) {
-        this.preguntas = this.preguntas.filter(p => p.active);
+  cargarPreguntas() {
+    this.http.get<TestConPreguntas[]>(`http://localhost:8000/api/cursos/${this.cursoId}/tests/`).subscribe({
+      next: (data) => {
+        // Aplanamos preguntas con el nombre del test
+        this.preguntas = data.flatMap(test =>
+          test.preguntas.map(p => ({
+            ...p,
+            test_nombre: test.name
+          }))
+        );
+  
+        if (!this.esProfesor) {
+          this.preguntas = this.preguntas.filter(p => p.active);
+        }
+      },
+      error: err => {
+        this.error = 'Error cargando preguntas';
+        console.error(err);
       }
-    },
-    error: err => {
-      this.error = 'Error cargando preguntas';
-      console.error(err);
-    }
-  });
-}
+    });
+  }
+  
   guardarCambios(pregunta: Pregunta) {
-    const url = `http://localhost:8000/api/preguntas/${pregunta.id}/`;
+    const url = `http://localhost:8000/api/cursos/preguntas/${pregunta.id}/`;
     this.http.patch<Pregunta>(url, { active: pregunta.active }).subscribe({
       next: () => console.log('Estado actualizado'),
       error: err => {

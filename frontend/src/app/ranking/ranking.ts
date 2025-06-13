@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ranking',
@@ -14,11 +15,12 @@ export class Ranking implements OnInit {
   ranking: any[] = [];
   error = '';
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.cursoId = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarRanking();
+    const urlParams = this.router.url.split('/');
   }
 
   cargarRanking() {
@@ -30,5 +32,9 @@ export class Ranking implements OnInit {
           console.error(err);
         }
       });
+  }
+
+  volverAlCurso() {
+    this.router.navigate(['/curso', this.cursoId]);
   }
 }

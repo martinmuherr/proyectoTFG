@@ -162,7 +162,8 @@ class PreguntasList(generics.ListAPIView):
 class PreguntaUpdate(generics.UpdateAPIView):
     queryset = Pregunta.objects.all()
     serializer_class = PreguntaSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
+
 
 class IntercambioViewSet(viewsets.ModelViewSet):
     queryset = Intercambio.objects.all()

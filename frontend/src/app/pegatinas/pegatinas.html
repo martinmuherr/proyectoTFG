@@ -1,4 +1,7 @@
 <h2>Mis Pegatinas</h2>
+<button (click)="volverAlCurso()">
+  Volver al curso
+</button>
 <div *ngIf="error">{{ error }}</div>
 <div *ngIf="pegatinas.length === 0 && !error">No tienes pegatinas aún.</div>
 <div class="pegatinas-container">

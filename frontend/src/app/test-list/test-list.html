@@ -1,28 +1,35 @@
-<h2>Preguntas del Test</h2>
+<button
+  (click)="volverAlCurso()">
+  Volver al curso
+</button>
 
-<div *ngIf="error" style="color:red">{{ error }}</div>
-
-<ul>
-  <li *ngFor="let pregunta of preguntas">
+<ul style="list-style: none; padding: 0;">
+  <li *ngFor="let pregunta of preguntas" style="margin-bottom: 16px; border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
     <ng-container *ngIf="esProfesor; else alumno">
-      <label>
+      <label style="font-size: 16px; display: block;">
         <input
           type="checkbox"
           [(ngModel)]="pregunta.active"
           (change)="guardarCambios(pregunta)"
         />
-        {{ pregunta.texto }}
+        <strong>{{ pregunta.texto }}</strong>
         <span *ngIf="!pregunta.active" style="color: gray;">(inactiva)</span>
       </label>
+      <ul style="margin-top: 8px;">
+        <li *ngFor="let r of pregunta.respuestas">
+          - {{ r.texto }} <span *ngIf="r.correcta" style="color: green;">✔</span>
+        </li>
+      </ul>
     </ng-container>
+
     <ng-template #alumno>
       <button
         (click)="empezarPregunta(pregunta.id)"
         [disabled]="!pregunta.active"
+        style="padding: 8px 16px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; background-color: #f9f9f9; cursor: pointer;"
       >
         {{ pregunta.texto }}
       </button>
     </ng-template>
   </li>
 </ul>
-<button (click)="volverAlCurso()">Volver</button>

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-intercambio',
@@ -19,12 +21,13 @@ export class Intercambio implements OnInit {
   receptorId: number | null = null;
   pegatinaARecibirId: number | null = null;
   intercambiosPendientes: any[] = [];
+  
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
     const urlParams = this.router.url.split('/');
-    this.cursoId = Number(urlParams[2]);
+    this.cursoId = Number(this.route.snapshot.paramMap.get('cursoId'));
 
     this.cargarUsuarios();
     this.cargarPegatinas();
@@ -57,7 +60,8 @@ export class Intercambio implements OnInit {
     this.http.post('http://localhost:8000/api/cursos/intercambios/', {
       pegatina_emisor: this.pegatinaSeleccionada,
       receptor: this.receptorId,
-      pegatina_receptor: null 
+      pegatina_receptor: null,
+      curso: this.cursoId
     }).subscribe(() => {
       alert('Solicitud enviada');
       this.cargarIntercambios();
@@ -86,5 +90,9 @@ export class Intercambio implements OnInit {
         this.cargarIntercambios();
       });
   }
+
+  volverAlCurso() {
+    this.router.navigate(['/curso', this.cursoId]);
+  }  
   
 }

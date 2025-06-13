@@ -17,5 +17,7 @@ urlpatterns = [
     path('mis-pegatinas/', views.mis_pegatinas, name='mis_pegatinas'),
     path('usuarios-mismo-curso/', usuarios_mismo_curso, name='usuarios_mismo_curso'),
     path('historial-intercambios/', views.historial_intercambios, name='historial_intercambios'),
+
+    
     path('', include(router.urls)),
 ]

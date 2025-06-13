@@ -13,11 +13,11 @@ class RespuestaSerializer(serializers.ModelSerializer):
 
 class PreguntaSerializer(serializers.ModelSerializer):
     respuestas = RespuestaSerializer(many=True, read_only=True)
+    test_nombre = serializers.CharField(source='test.name', read_only=True)
 
     class Meta:
         model = Pregunta
-        fields = ['id', 'texto', 'respuestas', 'active'] 
-
+        fields = ['id', 'texto', 'respuestas', 'active', 'test_nombre'] 
 
 class TestSerializer(serializers.ModelSerializer):
     preguntas = PreguntaSerializer(many=True, read_only=True)

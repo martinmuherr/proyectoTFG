@@ -28,4 +28,11 @@ export class Cursos {
   unirse(cursoId: number) {
     this.router.navigate(['/curso', cursoId]);
   }
+
+  cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    this.router.navigate(['/']);
+  }
+  
 }

@@ -41,4 +41,9 @@ export class CursoDetalle implements OnInit {
     this.router.navigate(['/curso', this.cursoId, 'perfil']);
   }
 
+  volverACursos() {
+    this.router.navigate(['/cursos']);
+  }
+  
+
 }
