@@ -55,7 +55,8 @@ export class Intercambio implements OnInit {
   }
 
   enviarSolicitud() {
-    if (!this.pegatinaSeleccionada || !this.receptorId) return;
+    console.log('cursoId que se envía:', this.cursoId);  // Agrega esto
+    if (!this.pegatinaSeleccionada || !this.receptorId || !this.cursoId) return;
   
     this.http.post('http://localhost:8000/api/cursos/intercambios/', {
       pegatina_emisor: this.pegatinaSeleccionada,
@@ -65,8 +66,9 @@ export class Intercambio implements OnInit {
     }).subscribe(() => {
       alert('Solicitud enviada');
       this.cargarIntercambios();
-    });    
+    });
   }
+  
   
   aceptar(intercambio: any) {
     if (!this.pegatinaARecibirId) {

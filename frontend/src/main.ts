@@ -28,7 +28,7 @@ import { Perfil } from './app/perfil/perfil';
       { path: 'curso/:cursoId/tests', component: TestsList },
       { path: 'curso/:id/ranking', component: Ranking },
       { path: 'curso/:id/pegatinas', component: Pegatinas },
-      { path: 'curso/:id/intercambio', component: Intercambio },
+      { path: 'curso/:cursoId/intercambio', component: Intercambio },
       { path: 'curso/:id/perfil', component: Perfil },
       { path: '**', component: NotFound }
     ];

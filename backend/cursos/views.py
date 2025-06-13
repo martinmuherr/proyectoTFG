@@ -182,10 +182,17 @@ class IntercambioViewSet(viewsets.ModelViewSet):
         if not serializer.is_valid():
             print("DEBUG errores:", serializer.errors)
             return Response(serializer.errors, status=400)
+        
+        curso_id = data.get('curso')
+        if not curso_id:
+            return Response({'error': 'curso es requerido'}, status=400)
 
-        # Guardamos el intercambio con el usuario autenticado como emisor
-        serializer.save(emisor=request.user)
+        curso = Cursos.objects.get(pk=curso_id)
+
+        # Guardamos el intercambio con el usuario autenticado como emisor y el curso
+        serializer.save(emisor=request.user, curso=curso)
         return Response(serializer.data, status=201)
+
 
 
 

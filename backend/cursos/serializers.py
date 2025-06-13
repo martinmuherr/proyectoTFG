@@ -44,10 +44,12 @@ class IntercambioSerializer(serializers.ModelSerializer):
     receptor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     pegatina_emisor = serializers.PrimaryKeyRelatedField(queryset=Pegatina.objects.all())
     pegatina_receptor = serializers.PrimaryKeyRelatedField(queryset=Pegatina.objects.all(), allow_null=True)
+    curso = serializers.PrimaryKeyRelatedField(queryset=Cursos.objects.all())
 
     class Meta:
         model = Intercambio
         fields = '__all__'
+
 
 
 
