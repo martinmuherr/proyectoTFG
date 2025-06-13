@@ -1,23 +1,131 @@
-.login-container {
-  max-width: 300px;
-  margin: 50px auto;
+:root {
+  --color-primario: #e1b365;
+  --color-secundario: #674f23;
+  --color-error: #e48b69;
+  --color-acierto: #e5db84;
+  --color-fondo: #ffeeac;
+  --color-fondo-linea: #e5db84;
+  --color-input-focus: #e5c17a;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-fondo),
+    var(--color-fondo) 30px,
+    var(--color-fondo-linea) 30px,
+    var(--color-fondo-linea) 32px
+  );
+  font-family: 'Arial', sans-serif;
+}
+
+app-root {
   display: flex;
   flex-direction: column;
+  min-height: 100%;
+}
+
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(3px);
+  border-radius: 16px;
+  max-width: 400px;
+  width: 90%;
+}
+
+
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--color-secundario);
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.login-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--color-secundario);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 input {
-  margin: 10px 0;
-  padding: 8px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 2px solid var(--color-secundario);
+  border-radius: 12px;
   font-size: 1rem;
+  background-color: white;
+  transition: background-color 0.3s;
 }
 
-button {
-  padding: 8px;
+input:focus {
+  background-color: var(--color-input-focus);
+  outline: none;
+}
+
+button[type="submit"] {
+  background-color: var(--color-primario);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 20px;
   font-size: 1rem;
+  color: #000;
   cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--color-input-focus);
 }
 
 .error {
-  color: red;
-  margin-top: 10px;
+  color: var(--color-error);
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.login-container > button:last-child {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--color-secundario);
+  margin-top: 0.5rem;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.login-container > button:last-child:hover {
+  color: var(--color-primario);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 2rem;
+  }
+
+  form {
+    max-width: 90%;
+  }
 }

@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+    --color-primario: #e1b365;      /* botones, input focus */
+    --color-secundario: #674f23;    /* texto fuerte, títulos */
+    --color-error: #e48b69;         /* errores, advertencias */
+    --color-fondo: #ffeeac;         /* fondo principal */
+    --color-fondo-linea: #e5db84;   /* líneas diagonales suaves */
+    --color-input-focus: #e5c17a;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--color-fondo),
+      var(--color-fondo) 30px,
+      var(--color-fondo-linea) 30px,
+      var(--color-fondo-linea) 32px
+    );
+    font-family: 'Arial', sans-serif;
+  }
+  
+  app-root {
+    display: block;
+    height: 100%;
+  }
+  
