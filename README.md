@@ -57,8 +57,6 @@ Backend disponible en http://localhost:8000
 ```bash
 cd frontend
 
-cd frontend
-
 npm install
 
 ng serve
