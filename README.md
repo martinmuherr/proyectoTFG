@@ -45,7 +45,7 @@ cd backend
 pip install -r requirements.txt
 
 pip install django djangorestframework djangorestframework-simplejwt pillow django-cors-headers
-pip freeze > requirements.txt
+pip freeze > requirements.txt    --en caso de querer tener otro requirements por si cambiasen las versiones
 
 python manage.py makemigrations
 python manage.py migrate
