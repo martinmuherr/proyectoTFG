@@ -1,0 +1,75 @@
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin: 2rem 0 1rem;
+    color: var(--color-secundario);
+  }
+  
+  .cursos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 2rem;
+    justify-items: center;
+  }
+  
+  .curso-card {
+    background-color: var(--color-secundario);
+    color: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .curso-nombre {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: auto;
+  }
+  
+  .curso-card button {
+    margin-top: auto;
+    background-color: var(--color-primario);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .curso-card button:hover {
+    background-color: var(--color-input-focus);
+  }
+  
+  .cerrar-sesion-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1.5rem 2rem 2rem;
+  }
+  
+  .cerrar-sesion-container button {
+    background: none;
+    border: 2px solid var(--color-secundario);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: var(--color-secundario);
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .cerrar-sesion-container button:hover {
+    background-color: var(--color-primario);
+    color: #000;
+  }
+  
